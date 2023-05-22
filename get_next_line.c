@@ -8,40 +8,62 @@ char *get_next_line(int fd)
     static char *temp;
     char *line;
 
+    line = NULL;
     if(fd < 0 || BUFFER_SIZE <= 0)
         return NULL;
     temp = read_save_modifid_and_send(fd, temp);
+    if(!temp)
+        return (NULL);
     line = send_line(temp);
     temp = rm_line(temp);
-    //printf("-------line = %s\n", line);
-    //printf("temp = %s\n", temp);
     return(line);
 }
-
+///////////////////MEMORY LEADKS /////////////////////////
 char *rm_line(char *temp)
 {
-    char *new_temp;
-    int hin;
-    int i;
+    // char *new_temp;
+    // int hin;
+    // int i;
 
-    if(!temp)
-        return NULL;
-    hin = hin_bis_cut(temp);
-    hin++;
-    i = 0;
-    new_temp = malloc(sizeof(char) * (ft_strlen(temp + hin) + 1));
-    if(!new_temp)
-        return NULL;
+    // if(!temp)
+    //     return NULL;
+    // hin = hin_bis_cut(temp);
+    // hin++;
+    // i = 0;
+    // new_temp = malloc(sizeof(char) * (ft_strlen(temp + hin) + 1));
+    // if(!new_temp)
+    //     return NULL;
 
-    while(temp[hin] != '\0')
-    {
-        new_temp[i] = temp[hin];
-        i++;
-        hin++;
-    }
-    new_temp[i] = 0;
-    free(temp);
-    return(new_temp);
+    // while(temp[hin] != '\0')
+    // {
+    //     new_temp[i] = temp[hin];
+    //     i++;
+    //     hin++;
+    // }
+    // new_temp[i] = 0;
+    // free(temp);
+    // return(new_temp);
+    	char	*modifidet_temp;
+	int		i;
+	int		z;
+
+	i = 0;
+	z = 0;
+	while (temp[i] && temp[i] != '\n')
+		i++;
+	if (!temp[i])
+	{
+		free(temp);
+		return (NULL);
+	}
+	modifidet_temp = malloc(ft_strlen(temp + ++i) + 1);
+	if (!modifidet_temp)
+		return (NULL);
+	while (temp[i])
+		modifidet_temp[z++] = temp[i++];
+	modifidet_temp[z] = '\0';
+	free(temp);
+	return (modifidet_temp);
 }
 
 /*
@@ -63,36 +85,32 @@ void check_null(char *temp)
 */
 char *read_save_modifid_and_send(int fd, char *temp)
 {
-    int read_check = 1;
+    int read_check;
     char *buff;
     //char *line;
-    buff = malloc(sizeof(char) * 2);
+
+    read_check = 1;
+
+    buff = malloc(sizeof(char) * (BUFFER_SIZE + 1));
     if(!buff)
         return NULL;
-    //count = hin_bis_cut(temp);
-   // printf("count = %d \n", count);
-   //read_check = read(fd, buff, BUFFER_SIZE);
-   //buff[read_check] = 0;
     buff[0] = ' ';
-    while(read_check != 0 && buff[0])
+    while(read_check != 0 && !ft_strchr(temp, '\n'))
     {
-        read_check = read(fd, buff, 1);
+        read_check = read(fd, buff, BUFFER_SIZE);
         if(read_check == -1)
         {
             free(buff);
             return NULL;
         }
         buff[read_check] = '\0';
-       // printf("buff = %s \n", buff);
         temp = ft_strjoin(temp, buff);
     }
-    //printf("temp = %s\n", temp);
-   // printf("line = %s", line);
     free(buff);
     return (temp);
 }
 
-
+/*
 int main(void)
 {
     char *filename = "hub.txt";
@@ -119,4 +137,6 @@ int main(void)
     
     return 0;
 }
+*/
+
 
