@@ -1,33 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mmanssou <mmanssou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 1970/01/01 01:00:00 by mmanssou          #+#    #+#             */
-/*   Updated: 2023/06/19 11:29:02 by mmanssou         ###   ########.fr       */
+/*   Updated: 2023/06/19 11:28:42 by mmanssou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*read_save_modifid_and_send(int fd, char *temp);
 char	*rm_line(char *temp);
 
 char	*get_next_line(int fd)
 {
-	static char	*temp;
+	static char	*temp[1024];
 	char		*line;
 
 	line = NULL;
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 || fd > 1024)
 		return (NULL);
-	temp = read_save_modifid_and_send(fd, temp);
-	if (!temp)
+	temp[fd] = read_save_modifid_and_send(fd, temp[fd]);
+	if (!temp[fd])
 		return (NULL);
-	line = send_line(temp);
-	temp = rm_line(temp);
+	line = send_line(temp[fd]);
+	temp[fd] = rm_line(temp[fd]);
 	return (line);
 }
 
